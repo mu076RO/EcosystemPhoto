@@ -1,34 +1,41 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
+#include "CheckBoxLine.h"
+
+void reload();
+
+FilePath path = U"C:/Users/okamu/Desktop";	//捜査パスの初期位置
+Array<String> extensions;
+Array<String> photoPaths;	//結果を格納
 
 void Main()
 {
-	Scene::SetBackground(Color(255, 255, 255));
+	Scene::SetBackground(Color(0, 255, 255));
 
 	const Font font(16);	//フォントを用意
 
-	FilePath path = U"C:/Users/okamu/Desktop";	//捜査パスの初期位置
-	Array<String> photoPaths;	//結果を格納
+	CheckBoxLine checkBoxes;
 
-	JSONReader extensionData(U"extension.json");
-	Array<String> extensions;
+	reload();
 
-	if (extensionData.isEmpty() != true)
+	while (System::Update())
 	{
-		extensions = extensionData[U"extension"].getArray<String>();
-	}
+		if (checkBoxes.update(&extensions) == true)
+			reload();
 
+		for (size_t row = 0; row < photoPaths.size(); row++)	//列挙
+			font(photoPaths[row]).draw(Point(0, 64 + 16 * row), Palette::Black);
+	}
+}
+
+void reload()
+{
+	photoPaths.clear();
 	//再帰的にpath以下の全ファイルを捜査
 	for (auto& child : FileSystem::DirectoryContents(path, /*true*/false))
 	{
 		child = FileSystem::FileName(child);	//.pngファイルを格納
 		if (extensions.includes(FileSystem::Extension(child)) == true)
 			photoPaths.push_back(child);
-	}
-
-	while (System::Update())
-	{
-		for (size_t row = 0; row < photoPaths.size(); row++)	//列挙
-			font(photoPaths[row]).draw(Point(0, 16 * row), Palette::Black);
 	}
 }
 
