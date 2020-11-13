@@ -9,11 +9,19 @@ void Main()
 	FilePath path = U"C:/Users/okamu/Desktop";	//捜査パスの初期位置
 	Array<String> photoPaths;	//結果を格納
 
+	JSONReader extensionData(U"extension.json");
+	Array<String> extensions;
+
+	if (extensionData.isEmpty() != true)
+	{
+		extensions = extensionData[U"extension"].getArray<String>();
+	}
+
 	//再帰的にpath以下の全ファイルを捜査
 	for (auto& child : FileSystem::DirectoryContents(path, /*true*/false))
 	{
 		child = FileSystem::FileName(child);	//.pngファイルを格納
-		if (FileSystem::Extension(child) == U"png")
+		if (extensions.includes(FileSystem::Extension(child)) == true)
 			photoPaths.push_back(child);
 	}
 
