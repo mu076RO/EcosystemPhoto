@@ -1,5 +1,8 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
 #include "CheckBoxLine.h"
+#include "ImageCell.h"
+
+const int LINENUM = 6;
 
 void reload();
 
@@ -7,11 +10,13 @@ FilePath path = U"C:/Users/okamu/Desktop";	//捜査パスの初期位置
 Array<String> extensions;
 Array<String> photoPaths;	//結果を格納
 
+Array<ImageCell> cells;
+
 void Main()
 {
 	Scene::SetBackground(Color(0, 255, 255));
 
-	const Font font(16);	//フォントを用意
+	FontAsset::Register(U"16", 16);	//フォントを用意
 
 	CheckBoxLine checkBoxes;
 
@@ -22,8 +27,8 @@ void Main()
 		if (checkBoxes.update(&extensions) == true)
 			reload();
 
-		for (size_t row = 0; row < photoPaths.size(); row++)	//列挙
-			font(photoPaths[row]).draw(Point(0, 64 + 16 * row), Palette::Black);
+		for (auto& cell : cells)
+			cell.draw();
 	}
 }
 
@@ -33,10 +38,13 @@ void reload()
 	//再帰的にpath以下の全ファイルを捜査
 	for (auto& child : FileSystem::DirectoryContents(path, /*true*/false))
 	{
-		child = FileSystem::FileName(child);	//.pngファイルを格納
 		if (extensions.includes(FileSystem::Extension(child)) == true)
 			photoPaths.push_back(child);
 	}
+
+	cells.clear();
+	for (size_t row = 0; row < photoPaths.size(); row++)
+		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
 }
 
 //
