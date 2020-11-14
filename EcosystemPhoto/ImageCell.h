@@ -4,19 +4,23 @@
 class ImageCell
 {
 private:
-	//TextureRegion _texture;
+	TextureRegion _texture;
 	String _path;
 	String _name;
 
 	Rect _rect;
 	Rect _imageRect;
+	Rect _nameRect;
 
-	Point MERGIN = Point(16, 64);
+	Point WINDOW_MERGIN = Point(16, 64);
+	Point CELL_MERGIN = Point(8, 8);
 	Point SIZE = Point(128, 128);
 
 public:
 	ImageCell();
 	ImageCell(Point pos, String path);
+
+	void setTexture();
 
 	void draw();
 };
