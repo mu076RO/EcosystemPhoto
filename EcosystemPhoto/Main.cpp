@@ -1,6 +1,7 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
 #include "CheckBoxLine.h"
 #include "ImageCell.h"
+#include "FolderChoiceButton.h"
 
 const int LINENUM = 6;
 
@@ -19,12 +20,15 @@ void Main()
 	FontAsset::Register(U"16", 16);	//フォントを用意
 
 	CheckBoxLine checkBoxes;
+	FolderChoiceButton folderChoice;
 
 	reload();
 
 	while (System::Update())
 	{
 		if (checkBoxes.update(&extensions) == true)
+			reload();
+		if (folderChoice.update(&path) == true)
 			reload();
 
 		for (auto& cell : cells)
