@@ -7,7 +7,8 @@ const int LINENUM = 6;
 
 void reload();
 
-FilePath path = U"C:/Users/okamu/Desktop";	//捜査パスの初期位置
+FilePath path;	//捜査パスの初期位置
+FilePath basePath;
 Array<String> extensions;
 Array<String> photoPaths;	//結果を格納
 
@@ -16,6 +17,14 @@ Array<ImageCell> cells;
 void Main()
 {
 	Scene::SetBackground(Color(0, 255, 255));
+
+	JSONReader pathData(U"path.json");
+
+	if (pathData.isEmpty() != true)
+	{
+		basePath = pathData[U"base"].getString();
+		path = pathData[U"current"].getString();
+	}
 
 	FontAsset::Register(U"16", 16);	//フォントを用意
 
@@ -28,7 +37,7 @@ void Main()
 	{
 		if (checkBoxes.update(&extensions) == true)
 			reload();
-		if (folderChoice.update(&path) == true)
+		if (folderChoice.update(&path, basePath) == true)
 			reload();
 
 		for (auto& cell : cells)

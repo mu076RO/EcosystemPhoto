@@ -10,6 +10,6 @@ private:
 public:
 	FolderChoiceButton();
 
-	bool update(String* path);
+	bool update(String* path, String base);
 };
 

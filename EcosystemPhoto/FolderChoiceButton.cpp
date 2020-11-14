@@ -4,7 +4,7 @@ FolderChoiceButton::FolderChoiceButton()
 {
 }
 
-bool FolderChoiceButton::update(String* path)
+bool FolderChoiceButton::update(String* path, String base)
 {
 	bool reloadFlag = false;
 
@@ -12,12 +12,21 @@ bool FolderChoiceButton::update(String* path)
 	{
 		Optional<String> newPath = Dialog::SelectFolder(*path, U"フォルダを選択");
 
-		if (newPath.has_value() == true && newPath.value().includes(U"C:/Users/okamu/Desktop") == true)
+		if (newPath.has_value() == true && newPath.value().includes(base) == true)
 		{
 			*path = newPath.value();
 			reloadFlag = true;
+
+			JSONWriter pathData;
+			pathData.startObject();
+			{
+				pathData.key(U"base").writeString(base);
+				pathData.key(U"current").writeString(*path);
+			}
+			pathData.endObject();
+			pathData.save(U"path.json");
 		}	
 	}
 
-	return false;
+	return reloadFlag;
 }
