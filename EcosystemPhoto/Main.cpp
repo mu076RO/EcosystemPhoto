@@ -5,6 +5,7 @@
 
 const int LINENUM = 6;
 
+void ini();
 void reload();
 
 FilePath path;	//捜査パスの初期位置
@@ -16,22 +17,10 @@ Array<ImageCell> cells;
 
 void Main()
 {
-	Scene::SetBackground(Color(0, 255, 255));
-
-	JSONReader pathData(U"path.json");
-
-	if (pathData.isEmpty() != true)
-	{
-		basePath = pathData[U"base"].getString();
-		path = pathData[U"current"].getString();
-	}
-
-	FontAsset::Register(U"16", 16);	//フォントを用意
+	ini();
 
 	CheckBoxLine checkBoxes;
 	FolderChoiceButton folderChoice;
-
-	reload();
 
 	while (System::Update())
 	{
@@ -43,6 +32,38 @@ void Main()
 		for (auto& cell : cells)
 			cell.draw();
 	}
+}
+
+void ini()
+{
+	Scene::SetBackground(Color(128, 128, 128));
+
+	JSONReader pathData(U"path.json");
+	if (pathData.isEmpty() != true)
+	{
+		basePath = pathData[U"base"].getString();
+		path = pathData[U"current"].getString();
+	}
+	else
+	{
+		FilePath currentPath = FileSystem::CurrentDirectory();
+		basePath = currentPath;
+		path = currentPath;
+
+		JSONWriter pathData;
+		pathData.startObject();
+		{
+			pathData.key(U"base").writeString(basePath);
+			pathData.key(U"current").writeString(path);
+		}
+		pathData.endObject();
+		pathData.save(U"path.json");
+	}
+
+	FontAsset::Register(U"16", 16);	//フォントを用意
+	TextureAsset::Register(U"default", U"default.png");
+
+	reload();
 }
 
 void reload()

@@ -341,3 +341,4 @@ healthchecksdb
 EcosystemPhoto/App/
 *.filters
 EcosystemPhoto/EcosystemPhoto.vcxproj
+*.json

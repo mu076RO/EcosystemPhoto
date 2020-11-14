@@ -10,6 +10,20 @@ CheckBoxLine::CheckBoxLine()
 		_member = _extensions.size();
 		_checkFlags.resize(_member);
 	}
+	else
+	{
+		JSONWriter extensionData;
+		extensionData.startObject();
+		{
+			extensionData.key(U"extension").writeArray<String>({ U"jpg",U"png",U"gif" });
+		}
+		extensionData.endObject();
+		extensionData.save(U"extension.json");
+
+		_extensions = { U"jpg",U"png",U"gif" };
+		_member = _extensions.size();
+		_checkFlags.resize(_member);
+	}
 
 	for (auto& checkFlag : _checkFlags)
 		checkFlag = false;
