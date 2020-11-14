@@ -13,7 +13,7 @@ ImageCell::ImageCell(Point pos, String path)
 	_path = path;
 	_name = FileSystem::FileName(path);
 
-	TextureAsset::Register(_path, _path, AssetParameter::LoadAsync());
+	TextureAsset::Register(_path, _path, AssetParameter::LoadAsync());	//非同期画像読み込み
 }
 
 ImageCell::~ImageCell()
@@ -22,9 +22,9 @@ ImageCell::~ImageCell()
 
 void ImageCell::setTexture()
 {
-	Point size = TextureAsset(_path).size();
+	Point size = TextureAsset(_path).size();	//画像サイズの取得
 
-	if (size.y > size.x)
+	if (size.y > size.x)	//縦と横の大きさ	大きい方が枠に収まるように変形
 	{
 		_texture = TextureAsset(_path).scaled((double)(SIZE.y - CELL_MERGIN.y * 2) / size.y);
 		//_texture = TextureAsset(_path)(Point(0, 0), Point(size.y, size.y)).scaled((double)(SIZE.y - CELL_MERGIN.y * 2) / size.y);
@@ -35,6 +35,7 @@ void ImageCell::setTexture()
 		//_texture = TextureAsset(_path)(Point(0, 0), Point(size.x, size.x)).scaled((double)(SIZE.x - CELL_MERGIN.x * 2) / size.x);
 	}
 
+	//	アセットはコピー済みなので開放
 	TextureAsset(_path).release();
 	TextureAsset::Unregister(_path);
 }
@@ -42,14 +43,14 @@ void ImageCell::setTexture()
 void ImageCell::draw()
 {
 	//_rect.drawFrame(1, Palette::Black);
-	_imageRect.drawFrame(1, Palette::Black);
+	_imageRect.drawFrame(1, Palette::Black);	//枠描画
 
-	if (TextureAsset::IsReady(_path) == true && _texture.texture.isEmpty() == true)
+	if (TextureAsset::IsReady(_path) == true && _texture.texture.isEmpty() == true)	//アセット読み込み完了したとき画像セット（一回のみ）
 		setTexture();
 
-	if (_texture.texture.isEmpty() != true)
+	if (_texture.texture.isEmpty() != true)	//画像セットされたら画像描画
 		_texture.drawAt(_imageRect.center());
 
-	_nameRect.draw();
-	FontAsset(U"16")(_name).drawAt(_imageRect.bottomCenter(),Palette::Black);
+	_nameRect.draw();	//名前枠描画
+	FontAsset(U"16")(_name).drawAt(_imageRect.bottomCenter(),Palette::Black);	//名前描画
 }

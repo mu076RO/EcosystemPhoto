@@ -3,25 +3,26 @@
 #include "ImageCell.h"
 #include "FolderChoiceButton.h"
 
+//画像セルの行数と列数
 const int LINENUM = 6;
 const int ROWNUM = 5;
 
-void ini();
-void reload();
+void ini();	//初期化
+void reload();	//セルの再ロード
 
-FilePath path;	//捜査パスの初期位置
-FilePath basePath;
-Array<String> extensions;
+FilePath path;	//現在パス
+FilePath basePath;	//基底パス（これ以上上のパスを参照不可）
+Array<String> extensions;	//拡張子
 Array<String> photoPaths;	//結果を格納
 
-Array<ImageCell> cells;
+Array<ImageCell> cells;	//画像セル
 
 void Main()
 {
 	ini();
 
-	CheckBoxLine checkBoxes;
-	FolderChoiceButton folderChoice;
+	CheckBoxLine checkBoxes;	//チェックボックス列
+	FolderChoiceButton folderChoice;	//ブラウズボタン
 
 	while (System::Update())
 	{
@@ -39,18 +40,23 @@ void ini()
 {
 	Scene::SetBackground(Color(128, 128, 128));
 
+	//パスファイルの読み込み
 	JSONReader pathData(U"path.json");
+	//パスファイルがある場合
 	if (pathData.isEmpty() != true)
 	{
 		basePath = pathData[U"base"].getString();
 		path = pathData[U"current"].getString();
 	}
+	//パスファイルがない場合
 	else
 	{
+		//現在パス、基底パスともに実行ファイルの位置を指定
 		FilePath currentPath = FileSystem::CurrentDirectory();
 		basePath = currentPath;
 		path = currentPath;
 
+		//jsonファイルを作成
 		JSONWriter pathData;
 		pathData.startObject();
 		{
@@ -71,8 +77,9 @@ void reload()
 	photoPaths.clear();
 	//再帰的にpath以下の全ファイルを捜査
 	int cellNum = 0;
-	for (auto& child : FileSystem::DirectoryContents(path, true))
+	for (auto& child : FileSystem::DirectoryContents(path, false))
 	{
+		//拡張子が一致したら同じ
 		if (extensions.includes(FileSystem::Extension(child)) == true)
 		{
 			photoPaths.push_back(child);
@@ -83,6 +90,7 @@ void reload()
 			break;
 	}
 
+	//パスを基にセルを作成
 	cells.clear();
 	for (size_t row = 0; row < photoPaths.size(); row++)
 		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));

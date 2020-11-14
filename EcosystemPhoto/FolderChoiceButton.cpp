@@ -12,11 +12,12 @@ bool FolderChoiceButton::update(String* path, String base)
 	{
 		Optional<String> newPath = Dialog::SelectFolder(*path, U"フォルダを選択");
 
-		if (newPath.has_value() == true && newPath.value().includes(base) == true)
+		if (newPath.has_value() == true && newPath.value().includes(base) == true)	//基底フォルダ以下である
 		{
 			*path = newPath.value();
 			reloadFlag = true;
 
+			//jsonファイルの更新
 			JSONWriter pathData;
 			pathData.startObject();
 			{
