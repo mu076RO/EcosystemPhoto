@@ -20,6 +20,8 @@ public:
 	ImageCell();
 	ImageCell(Point pos, String path);
 
+	~ImageCell();
+
 	void setTexture();
 
 	void draw();

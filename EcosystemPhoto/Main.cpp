@@ -4,6 +4,7 @@
 #include "FolderChoiceButton.h"
 
 const int LINENUM = 6;
+const int ROWNUM = 5;
 
 void ini();
 void reload();
@@ -61,7 +62,6 @@ void ini()
 	}
 
 	FontAsset::Register(U"16", 16);	//フォントを用意
-	TextureAsset::Register(U"default", U"default.png");
 
 	reload();
 }
@@ -70,10 +70,17 @@ void reload()
 {
 	photoPaths.clear();
 	//再帰的にpath以下の全ファイルを捜査
-	for (auto& child : FileSystem::DirectoryContents(path, /*true*/false))
+	int cellNum = 0;
+	for (auto& child : FileSystem::DirectoryContents(path, true))
 	{
 		if (extensions.includes(FileSystem::Extension(child)) == true)
+		{
 			photoPaths.push_back(child);
+		//	cellNum++;
+		}
+
+		if (cellNum >= ROWNUM * LINENUM)
+			break;
 	}
 
 	cells.clear();
