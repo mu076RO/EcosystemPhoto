@@ -1,7 +1,7 @@
 # EcosystemPhoto
 
 ## 概要
-生物の画像を分類分けする画像ビューア
+フォルダの再帰検索とかに対応した画像ビューア
 
 ## リンクとか
 [ダウンロード（EcosystemPhoto.v1）](Release/EcosystemPhoto.v1.exe)<br>
