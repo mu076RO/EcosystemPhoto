@@ -41,11 +41,15 @@ void Main()
 			loadCell();
 		if (folderChoice.update(&path, basePath) == true)
 			loadCell();
+
 		scroll.update();
 
+		for (auto& cell : cells)
+			cell.update();
+		/*
 		ClearPrint();
 		Print << scroll.scroll();
-
+		*/
 		for (auto& cell : cells)
 			cell.setPos(scroll.scroll());
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <Siv3d.hpp>
+#include <windows.h>
 
 class ImageCell
 {
@@ -26,6 +27,7 @@ public:
 	void setPos(double scroll);
 	void setTexture();	//‰æ‘œ‚Ìİ’è
 
+	void update();
 	void draw();	//•`‰æ
 
 	double bottomY();

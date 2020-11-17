@@ -40,6 +40,14 @@ void ImageCell::setTexture()
 	}
 }
 
+void ImageCell::update()
+{
+	if (_rect.movedBy(0, _scrollY).mouseOver() == true && MouseL.down() == true)
+	{
+		ShellExecute(NULL, L"open", _path.toWstr().c_str(), NULL, NULL, SW_SHOW);
+	}
+}
+
 void ImageCell::draw()
 {
 	if (Scene::Rect().intersects(_rect.movedBy(0,_scrollY)) == true)
