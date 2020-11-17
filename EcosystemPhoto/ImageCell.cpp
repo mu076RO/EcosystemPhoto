@@ -52,6 +52,11 @@ void ImageCell::draw()
 		_nameRect.movedBy(0,_scrollY).draw();	//–¼‘O˜g•`‰æ
 		FontAsset(U"16")(_name).drawAt(_imageRect.bottomCenter() + Vec2(0, _scrollY), Palette::Black);	//–¼‘O•`‰æ
 	}
+
+	if (_rect.movedBy(0,_scrollY).mouseOver() == true)
+	{
+		_rect.movedBy(0, _scrollY).draw(Color(255, 255, 255, 64));
+	}
 }
 
 double ImageCell::bottomY()
