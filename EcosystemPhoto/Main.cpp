@@ -1,9 +1,134 @@
-﻿
-#include <Siv3D.hpp> // OpenSiv3D v0.4.3
+﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
+#include <future>
+#include <chrono>
+#include "CheckBoxLine.h"
+#include "ImageCell.h"
+#include "FolderChoiceButton.h"
+#include "ScrollPage.h"
+
+//画像セルの行数と列数
+const int LINENUM = 6;
+const int ROWNUM = 5;
+
+void ini();	//初期化
+void loadCell();	//セルのロード
+void loadImage(size_t index);
+
+FilePath path;	//現在パス
+FilePath basePath;	//基底パス（これ以上上のパスを参照不可）
+Array<String> extensions;	//拡張子
+Array<String> photoPaths;	//結果を格納
+
+Array<ImageCell> cells;	//画像セル
+size_t cellIndex;
+
+ScrollPage scroll;
 
 void Main()
 {
-	Scene::SetBackground(Color(255, 255, 255));
+	ini();
+
+	CheckBoxLine checkBoxes;	//チェックボックス列
+	FolderChoiceButton folderChoice;	//ブラウズボタン
+
+	while (System::Update())
+	{
+		//描画
+		for (auto& cell : cells)
+			cell.draw();
+		Rect(Point(0, 0), Point(800, 64)).draw(Color(128, 128, 128));
+
+		//UI描画
+		if (checkBoxes.update(&extensions) == true)
+			loadCell();
+		if (folderChoice.update(&path, basePath) == true)
+			loadCell();
+
+		//更新処理
+		scroll.update();
+
+		for (auto& cell : cells)
+			cell.update();
+
+		for (auto& cell : cells)
+			cell.setScroll(scroll.scroll());
+
+		//画像の順次ロード
+		if (cellIndex < cells.size())
+		{
+			loadImage(cellIndex);
+			cellIndex++;
+		}
+
+		/*
+		ClearPrint();
+		Print << scroll.scroll();
+		*/
+	}
+}
+
+void ini()
+{
+	Scene::SetBackground(Color(128, 128, 128));
+
+	//パスファイルの読み込み
+	JSONReader pathData(U"path.json");
+	//パスファイルがある場合
+	if (pathData.isEmpty() != true)
+	{
+		basePath = pathData[U"base"].getString();
+		path = pathData[U"current"].getString();
+	}
+	//パスファイルがない場合
+	else
+	{
+		//現在パス、基底パスともに実行ファイルの位置を指定
+		FilePath currentPath = FileSystem::CurrentDirectory();
+		basePath = currentPath;
+		path = currentPath;
+
+		//jsonファイルを作成
+		JSONWriter pathData;
+		pathData.startObject();
+		{
+			pathData.key(U"base").writeString(basePath);
+			pathData.key(U"current").writeString(path);
+		}
+		pathData.endObject();
+		pathData.save(U"path.json");
+	}
+
+	FontAsset::Register(U"16", 16);	//フォントを用意
+
+	loadCell();
+}
+
+void loadCell()
+{
+	photoPaths.clear();
+	//再帰的にpath以下の全ファイルを捜査
+	int cellNum = 0;
+	for (auto& child : FileSystem::DirectoryContents(path, true))
+	{
+		//拡張子が一致したら同じ
+		if (extensions.includes(FileSystem::Extension(child)) == true)
+		{
+			photoPaths.push_back(child);
+		}
+	}
+
+	//パスを基にセルを作成
+	cells.clear();
+	cellIndex = 0;
+	for (size_t row = 0; row < photoPaths.size(); row++)
+		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
+
+	//scroll.setBottomY(cells[cells.size()].bottomY());
+}
+
+void loadImage(size_t index)
+{
+	cells[index].setTexture();
 }
 
 //
