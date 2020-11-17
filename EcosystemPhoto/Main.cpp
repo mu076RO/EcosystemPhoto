@@ -4,6 +4,7 @@
 #include "CheckBoxLine.h"
 #include "ImageCell.h"
 #include "FolderChoiceButton.h"
+#include "ScrollPage.h"
 
 //画像セルの行数と列数
 const int LINENUM = 6;
@@ -21,6 +22,8 @@ Array<String> photoPaths;	//結果を格納
 Array<ImageCell> cells;	//画像セル
 size_t cellIndex;
 
+ScrollPage scroll;
+
 void Main()
 {
 	ini();
@@ -30,18 +33,26 @@ void Main()
 
 	while (System::Update())
 	{
+		for (auto& cell : cells)
+			cell.draw();
+		Rect(Point(0, 0), Point(800, 64)).draw(Color(128, 128, 128));
+
 		if (checkBoxes.update(&extensions) == true)
 			loadCell();
 		if (folderChoice.update(&path, basePath) == true)
 			loadCell();
+		scroll.update();
+
+		ClearPrint();
+		Print << scroll.scroll();
 
 		for (auto& cell : cells)
-			cell.draw();
+			cell.setPos(scroll.scroll());
 
 		if (cellIndex < cells.size())
 		{
-			cellIndex++;
 			loadImage(cellIndex);
+			cellIndex++;
 		}
 	}
 }
@@ -93,11 +104,7 @@ void loadCell()
 		if (extensions.includes(FileSystem::Extension(child)) == true)
 		{
 			photoPaths.push_back(child);
-		//	cellNum++;
 		}
-
-		if (cellNum >= ROWNUM * LINENUM)
-			break;
 	}
 
 	//パスを基にセルを作成
@@ -105,6 +112,8 @@ void loadCell()
 	cellIndex = 0;
 	for (size_t row = 0; row < photoPaths.size(); row++)
 		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
+
+	//scroll.setBottomY(cells[cells.size()].bottomY());
 }
 
 void loadImage(size_t index)

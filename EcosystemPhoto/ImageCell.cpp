@@ -18,6 +18,11 @@ ImageCell::~ImageCell()
 {
 }
 
+void ImageCell::setPos(double scroll)
+{
+	_scrollY = scroll;
+}
+
 void ImageCell::setTexture()
 {
 	_texture = Texture(_path);
@@ -37,15 +42,19 @@ void ImageCell::setTexture()
 
 void ImageCell::draw()
 {
-	//_rect.drawFrame(1, Palette::Black);
-	_imageRect.drawFrame(1, Palette::Black);	//枠描画
+	if (Scene::Rect().intersects(_rect.movedBy(0,_scrollY)) == true)
+	{
+		//_rect.drawFrame(1, Palette::Black);
+		_imageRect.movedBy(0,_scrollY).drawFrame(1, Palette::Black);	//枠描画
 
-	if (TextureAsset::IsReady(_path) == true && _texture.texture.isEmpty() == true)	//アセット読み込み完了したとき画像セット（一回のみ）
-		setTexture();
+		_texture.drawAt(_imageRect.center()+Vec2(0,_scrollY));
 
-	if (_texture.texture.isEmpty() != true)	//画像セットされたら画像描画
-		_texture.drawAt(_imageRect.center());
+		_nameRect.movedBy(0,_scrollY).draw();	//名前枠描画
+		FontAsset(U"16")(_name).drawAt(_imageRect.bottomCenter() + Vec2(0, _scrollY), Palette::Black);	//名前描画
+	}
+}
 
-	_nameRect.draw();	//名前枠描画
-	FontAsset(U"16")(_name).drawAt(_imageRect.bottomCenter(),Palette::Black);	//名前描画
+double ImageCell::bottomY()
+{
+	return _rect.pos.y;
 }
