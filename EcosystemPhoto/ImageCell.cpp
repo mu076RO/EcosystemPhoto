@@ -12,8 +12,6 @@ ImageCell::ImageCell(Point pos, String path)
 
 	_path = path;
 	_name = FileSystem::FileName(path);
-
-	TextureAsset::Register(_path, _path, AssetParameter::LoadAsync());	//非同期画像読み込み
 }
 
 ImageCell::~ImageCell()
@@ -22,22 +20,19 @@ ImageCell::~ImageCell()
 
 void ImageCell::setTexture()
 {
-	Point size = TextureAsset(_path).size();	//画像サイズの取得
+	_texture = Texture(_path);
+	Point size = _texture.texture.size();	//画像サイズの取得
 
 	if (size.y > size.x)	//縦と横の大きさ	大きい方が枠に収まるように変形
 	{
-		_texture = TextureAsset(_path).scaled((double)(SIZE.y - CELL_MERGIN.y * 2) / size.y);
+		_texture = _texture.scaled((double)(SIZE.y - CELL_MERGIN.y * 2) / size.y);
 		//_texture = TextureAsset(_path)(Point(0, 0), Point(size.y, size.y)).scaled((double)(SIZE.y - CELL_MERGIN.y * 2) / size.y);
 	}
 	else
 	{
-		_texture = TextureAsset(_path).scaled((double)(SIZE.x - CELL_MERGIN.x * 2) / size.x);
+		_texture = _texture.scaled((double)(SIZE.x - CELL_MERGIN.x * 2) / size.x);
 		//_texture = TextureAsset(_path)(Point(0, 0), Point(size.x, size.x)).scaled((double)(SIZE.x - CELL_MERGIN.x * 2) / size.x);
 	}
-
-	//	アセットはコピー済みなので開放
-	TextureAsset(_path).release();
-	TextureAsset::Unregister(_path);
 }
 
 void ImageCell::draw()

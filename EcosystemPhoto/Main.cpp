@@ -1,4 +1,6 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
+#include <future>
+#include <chrono>
 #include "CheckBoxLine.h"
 #include "ImageCell.h"
 #include "FolderChoiceButton.h"
@@ -8,7 +10,8 @@ const int LINENUM = 6;
 const int ROWNUM = 5;
 
 void ini();	//初期化
-void reload();	//セルの再ロード
+void loadCell();	//セルのロード
+void loadImage(size_t index);
 
 FilePath path;	//現在パス
 FilePath basePath;	//基底パス（これ以上上のパスを参照不可）
@@ -16,6 +19,7 @@ Array<String> extensions;	//拡張子
 Array<String> photoPaths;	//結果を格納
 
 Array<ImageCell> cells;	//画像セル
+size_t cellIndex;
 
 void Main()
 {
@@ -27,12 +31,18 @@ void Main()
 	while (System::Update())
 	{
 		if (checkBoxes.update(&extensions) == true)
-			reload();
+			loadCell();
 		if (folderChoice.update(&path, basePath) == true)
-			reload();
+			loadCell();
 
 		for (auto& cell : cells)
 			cell.draw();
+
+		if (cellIndex < cells.size())
+		{
+			cellIndex++;
+			loadImage(cellIndex);
+		}
 	}
 }
 
@@ -69,15 +79,15 @@ void ini()
 
 	FontAsset::Register(U"16", 16);	//フォントを用意
 
-	reload();
+	loadCell();
 }
 
-void reload()
+void loadCell()
 {
 	photoPaths.clear();
 	//再帰的にpath以下の全ファイルを捜査
 	int cellNum = 0;
-	for (auto& child : FileSystem::DirectoryContents(path, false))
+	for (auto& child : FileSystem::DirectoryContents(path, true))
 	{
 		//拡張子が一致したら同じ
 		if (extensions.includes(FileSystem::Extension(child)) == true)
@@ -92,8 +102,14 @@ void reload()
 
 	//パスを基にセルを作成
 	cells.clear();
+	cellIndex = 0;
 	for (size_t row = 0; row < photoPaths.size(); row++)
 		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
+}
+
+void loadImage(size_t index)
+{
+	cells[index].setTexture();
 }
 
 //
