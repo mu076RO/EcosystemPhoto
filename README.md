@@ -4,7 +4,7 @@
 生物の画像を分類分けする画像ビューア
 
 ## リンクとか
-[ダウンロード（EcosystemPhoto.v1）](Release/EcosystemPhoto.v1)<br>
+[ダウンロード（EcosystemPhoto.v1）](Release/EcosystemPhoto.v1.exe)<br>
 [仕様書ダウンロード（readme.txt）](Release/readme.txt)
 
 ## 仕様説明
