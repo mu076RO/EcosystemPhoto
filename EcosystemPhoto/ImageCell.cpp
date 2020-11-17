@@ -18,14 +18,14 @@ ImageCell::~ImageCell()
 {
 }
 
-void ImageCell::setPos(double scroll)
+void ImageCell::setScroll(double scroll)
 {
 	_scrollY = scroll;
 }
 
 void ImageCell::setTexture()
 {
-	_texture = Texture(_path);
+	_texture = Texture(_path);	//画像の取得
 	Point size = _texture.texture.size();	//画像サイズの取得
 
 	if (size.y > size.x)	//縦と横の大きさ	大きい方が枠に収まるように変形
@@ -42,6 +42,7 @@ void ImageCell::setTexture()
 
 void ImageCell::update()
 {
+	//クリックされたら画像ビューアを立ち上げ
 	if (_rect.movedBy(0, _scrollY).mouseOver() == true && MouseL.down() == true)
 	{
 		ShellExecute(NULL, L"open", _path.toWstr().c_str(), NULL, NULL, SW_SHOW);
@@ -50,6 +51,7 @@ void ImageCell::update()
 
 void ImageCell::draw()
 {
+	//画面内にあったら描画
 	if (Scene::Rect().intersects(_rect.movedBy(0,_scrollY)) == true)
 	{
 		//_rect.drawFrame(1, Palette::Black);

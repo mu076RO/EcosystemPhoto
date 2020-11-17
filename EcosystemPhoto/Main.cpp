@@ -33,31 +33,37 @@ void Main()
 
 	while (System::Update())
 	{
+		//描画
 		for (auto& cell : cells)
 			cell.draw();
 		Rect(Point(0, 0), Point(800, 64)).draw(Color(128, 128, 128));
 
+		//UI描画
 		if (checkBoxes.update(&extensions) == true)
 			loadCell();
 		if (folderChoice.update(&path, basePath) == true)
 			loadCell();
 
+		//更新処理
 		scroll.update();
 
 		for (auto& cell : cells)
 			cell.update();
-		/*
-		ClearPrint();
-		Print << scroll.scroll();
-		*/
-		for (auto& cell : cells)
-			cell.setPos(scroll.scroll());
 
+		for (auto& cell : cells)
+			cell.setScroll(scroll.scroll());
+
+		//画像の順次ロード
 		if (cellIndex < cells.size())
 		{
 			loadImage(cellIndex);
 			cellIndex++;
 		}
+
+		/*
+		ClearPrint();
+		Print << scroll.scroll();
+		*/
 	}
 }
 
