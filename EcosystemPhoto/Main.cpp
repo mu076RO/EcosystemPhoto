@@ -7,7 +7,6 @@
 #include "ScrollPage.h"
 
 //セル周りの描画の軽量化
-//スクロール制限
 
 //画像セルの行数と列数
 const int LINENUM = 6;
@@ -63,10 +62,10 @@ void Main()
 			cellIndex++;
 		}
 
-		/*
+		
 		ClearPrint();
 		Print << scroll.scroll();
-		*/
+		
 	}
 }
 
