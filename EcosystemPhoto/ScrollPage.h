@@ -12,7 +12,7 @@ private:
 public:
 	ScrollPage();
 
-	void setBottomY(double bottomY);	//下限の設定
+	void reset(double bottomY);	//下限の設定
 	void update();	//更新
 
 	double scroll();	//スクロール値の取得

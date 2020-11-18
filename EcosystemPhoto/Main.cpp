@@ -6,6 +6,9 @@
 #include "FolderChoiceButton.h"
 #include "ScrollPage.h"
 
+//セル周りの描画の軽量化
+//スクロール制限
+
 //画像セルの行数と列数
 const int LINENUM = 6;
 const int ROWNUM = 5;
@@ -123,7 +126,8 @@ void loadCell()
 	for (size_t row = 0; row < photoPaths.size(); row++)
 		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
 
-	//scroll.setBottomY(cells[cells.size()].bottomY());
+	if(cells.size() != 0)
+		scroll.reset(cells[cells.size() - 1].bottomY());
 }
 
 void loadImage(size_t index)

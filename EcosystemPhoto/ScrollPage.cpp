@@ -5,8 +5,9 @@ ScrollPage::ScrollPage() : SPEED(50)
 	_scroll = 0;
 }
 
-void ScrollPage::setBottomY(double bottomY)
+void ScrollPage::reset(double bottomY)
 {
+	_scroll = 0;
 	_bottomY = bottomY;
 }
 
