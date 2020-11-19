@@ -4,9 +4,9 @@
 フォルダの再帰検索とかに対応した画像ビューア
 
 ## リンクとか
-[ダウンロード（EcosystemPhoto.v1）](Release/EcosystemPhoto.v1.exe)<br>
+[ダウンロード（EcosystemPhoto.v1.1）](Release/EcosystemPhoto.v1.1.exe)<br>
 [仕様書ダウンロード（readme.txt）](Release/readme.txt)<br>
-[.v1動作参考動画](https://twitter.com/movie_murby/status/1328671750343720961?s=20)
+[.v1.x動作参考動画](https://twitter.com/movie_murby/status/1328671750343720961?s=20)
 
 ## 仕様説明
 
