@@ -58,7 +58,7 @@ ExtensionSelecter::ExtensionSelecter()
 
 	setCheck();
 
-	_reloadFlag = true;
+	_reloadFlag = false;
 
 	_extensionData.close();
 }

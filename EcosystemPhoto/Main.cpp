@@ -3,7 +3,7 @@
 #include <chrono>
 #include "ExtensionSelecter.h"
 #include "ImageCell.h"
-#include "FolderChoiceButton.h"
+#include "FolderSelecter.h"
 #include "ScrollPage.h"
 
 //セル周りの描画の軽量化
@@ -17,7 +17,6 @@ void loadCell();	//セルのロード
 void loadImage(size_t index);
 
 FilePath path;	//現在パス
-FilePath basePath;	//基底パス（これ以上上のパスを参照不可）
 Array<String> extensions;	//有効な拡張子
 Array<String> photoPaths;	//結果を格納
 
@@ -28,10 +27,13 @@ ScrollPage scroll;
 
 void Main()
 {
-	ini();
-
 	ExtensionSelecter extensionSelecter;	//チェックボックス列
-	FolderChoiceButton folderChoice;	//ブラウズボタン
+	FolderSelecter folderChoice;	//ブラウズボタン
+
+	extensions = extensionSelecter.extensions();
+	path = folderChoice.path();
+
+	ini();
 
 	while (System::Update())
 	{
@@ -39,6 +41,12 @@ void Main()
 		if (extensionSelecter.reloadFlag() == true)
 		{
 			extensions = extensionSelecter.extensions();
+			loadCell();
+		}
+
+		if (folderChoice.reloadFlag())
+		{
+			path = folderChoice.path();
 			loadCell();
 		}
 
@@ -64,41 +72,13 @@ void Main()
 
 		//UI描画
 		extensionSelecter.update();
-		if (folderChoice.update(&path, basePath) == true)
-			loadCell();
+		folderChoice.update();
 	}
 }
 
 void ini()
 {
 	Scene::SetBackground(Color(128, 128, 128));
-
-	//パスファイルの読み込み
-	JSONReader pathData(U"path.json");
-	//パスファイルがある場合
-	if (pathData.isEmpty() != true)
-	{
-		basePath = pathData[U"base"].getString();
-		path = pathData[U"current"].getString();
-	}
-	//パスファイルがない場合
-	else
-	{
-		//現在パス、基底パスともに実行ファイルの位置を指定
-		FilePath currentPath = FileSystem::CurrentDirectory();
-		basePath = currentPath;
-		path = currentPath;
-
-		//jsonファイルを作成
-		JSONWriter pathData;
-		pathData.startObject();
-		{
-			pathData.key(U"base").writeString(basePath);
-			pathData.key(U"current").writeString(path);
-		}
-		pathData.endObject();
-		pathData.save(U"path.json");
-	}
 
 	FontAsset::Register(U"16", 16);	//フォントを用意
 
