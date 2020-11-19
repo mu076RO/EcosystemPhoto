@@ -2,7 +2,12 @@
 
 void ExtensionSelecter::setCheck()
 {
-	Array<String> defaultExtensions = _extensionData[U"default"].getArray<String>();
+	Array<String> defaultExtensions;
+
+	if (_extensionData[U"default"].isEmpty() != true)
+		defaultExtensions = _extensionData[U"default"].getArray<String>();
+	else
+		defaultExtensions = { U"png" };
 
 	//defaultに設定された拡張子だけチェックを入れて初期化
 	for (size_t i = 0; i < _member; i++)
@@ -17,24 +22,11 @@ void ExtensionSelecter::setCheck()
 void ExtensionSelecter::loadExtensions()
 {
 	//ファイルあり
-	if (_extensionData.isEmpty() != true)
-	{
+	if (_extensionData[U"extension"].isEmpty() != true)
 		_allExtensions = _extensionData[U"extension"].getArray<String>();
-	}
 	//ファイルなし
 	else
-	{
-		//拡張子ファイルの初期化
-		JSONWriter extensionData;
-		extensionData.startObject();
-		{
-			extensionData.key(U"extension").writeArray<String>({ U"jpg",U"png",U"gif" });
-		}
-		extensionData.endObject();
-		extensionData.save(U"extension.json");
-
 		_allExtensions = { U"jpg",U"png",U"gif" };
-	}
 }
 
 void ExtensionSelecter::setExtensions()
@@ -48,8 +40,20 @@ void ExtensionSelecter::setExtensions()
 
 ExtensionSelecter::ExtensionSelecter()
 {
-	
 	_extensionData.open(U"extension.json");	//拡張子ファイルを開く
+
+	if (_extensionData.isEmpty() == true)	//ファイルがない場合
+	{
+		//拡張子ファイルの初期化
+		JSONWriter extensionData;
+		extensionData.startObject();
+		{
+			extensionData.key(U"extension").writeArray<String>({ U"jpg",U"png",U"gif" });
+			extensionData.key(U"default").writeArray<String>({ U"png" });
+		}
+		extensionData.endObject();
+		extensionData.save(U"extension.json");
+	}
 
 	loadExtensions();	//拡張子の読み込み
 
