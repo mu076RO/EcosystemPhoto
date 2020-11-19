@@ -1,12 +1,11 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
 #include <future>
 #include <chrono>
+#include "UIDEFINE.h"
 #include "ExtensionSelecter.h"
 #include "ImageCell.h"
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
-
-//セル周りの描画の軽量化
 
 //画像セルの行数と列数
 const int LINENUM = 6;
@@ -52,8 +51,9 @@ void Main()
 
 		scroll.update();
 
-		for (auto& cell : cells)
-			cell.update();
+		if (taskBar.mouseOver() == true)
+			for (auto& cell : cells)
+				cell.update();
 
 		for (auto& cell : cells)
 			cell.setScroll(scroll.scroll());
@@ -68,7 +68,7 @@ void Main()
 		//描画
 		for (auto& cell : cells)
 			cell.draw();
-		Rect(Point(0, 0), Point(800, 64)).draw(Color(128, 128, 128));
+		taskBar.draw(Color(128, 128, 128));
 
 		//UI描画
 		extensionSelecter.update();

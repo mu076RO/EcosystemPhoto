@@ -15,7 +15,7 @@ private:
 	double _scrollY;	//スクロールしたy数値
 
 	Point WINDOW_MERGIN = Point(16, 64);	//ウィンドウの余白
-	Point CELL_MERGIN = Point(8, 8);	//セルの余白
+	Point IMAGE_MERGIN = Point(8, 8);	//セルの余白
 	Point SIZE = Point(128, 128);	//大きさ
 
 public:
