@@ -1,7 +1,7 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
 #include <future>
 #include <chrono>
-#include "CheckBoxLine.h"
+#include "ExtensionSelecter.h"
 #include "ImageCell.h"
 #include "FolderChoiceButton.h"
 #include "ScrollPage.h"
@@ -18,7 +18,7 @@ void loadImage(size_t index);
 
 FilePath path;	//現在パス
 FilePath basePath;	//基底パス（これ以上上のパスを参照不可）
-Array<String> extensions;	//拡張子
+Array<String> extensions;	//有効な拡張子
 Array<String> photoPaths;	//結果を格納
 
 Array<ImageCell> cells;	//画像セル
@@ -30,23 +30,18 @@ void Main()
 {
 	ini();
 
-	CheckBoxLine checkBoxes;	//チェックボックス列
+	ExtensionSelecter extensionSelecter;	//チェックボックス列
 	FolderChoiceButton folderChoice;	//ブラウズボタン
 
 	while (System::Update())
 	{
-		//描画
-		for (auto& cell : cells)
-			cell.draw();
-		Rect(Point(0, 0), Point(800, 64)).draw(Color(128, 128, 128));
-
-		//UI描画
-		if (checkBoxes.update(&extensions) == true)
-			loadCell();
-		if (folderChoice.update(&path, basePath) == true)
-			loadCell();
-
 		//更新処理
+		if (extensionSelecter.reloadFlag() == true)
+		{
+			extensions = extensionSelecter.extensions();
+			loadCell();
+		}
+
 		scroll.update();
 
 		for (auto& cell : cells)
@@ -62,10 +57,15 @@ void Main()
 			cellIndex++;
 		}
 
-		
-		ClearPrint();
-		Print << scroll.scroll();
-		
+		//描画
+		for (auto& cell : cells)
+			cell.draw();
+		Rect(Point(0, 0), Point(800, 64)).draw(Color(128, 128, 128));
+
+		//UI描画
+		extensionSelecter.update();
+		if (folderChoice.update(&path, basePath) == true)
+			loadCell();
 	}
 }
 
@@ -109,7 +109,6 @@ void loadCell()
 {
 	photoPaths.clear();
 	//再帰的にpath以下の全ファイルを捜査
-	int cellNum = 0;
 	for (auto& child : FileSystem::DirectoryContents(path, true))
 	{
 		//拡張子が一致したら同じ
