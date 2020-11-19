@@ -52,16 +52,16 @@ void ImageCell::update()
 void ImageCell::draw()
 {
 	Rect movedRect = _rect.movedBy(0, _scrollY);
-	Rect movedImageRect = _imageRect.movedBy(0, _scrollY);
 	//‰æ–Ê“à‚É‚ ‚Á‚½‚ç•`‰æ
 	if (Scene::Rect().intersects(movedRect) == true)
 	{
+		Rect movedImageRect = _imageRect.movedBy(0, _scrollY);
 		movedImageRect.drawFrame(1, Palette::Black);	//˜g•`‰æ
 
-		_texture.drawAt(movedImageRect.center()+Vec2(0,_scrollY));
+		_texture.drawAt(movedImageRect.center());
 
 		_nameRect.movedBy(0,_scrollY).draw();	//–¼‘O˜g•`‰æ
-		FontAsset(U"16")(_name).drawAt(movedImageRect.bottomCenter() + Vec2(0, _scrollY), Palette::Black);	//–¼‘O•`‰æ
+		FontAsset(U"16")(_name).drawAt(movedImageRect.bottomCenter(), Palette::Black);	//–¼‘O•`‰æ
 	}
 
 	if (movedRect.mouseOver() == true)

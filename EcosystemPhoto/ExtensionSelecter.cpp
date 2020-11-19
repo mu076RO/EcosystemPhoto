@@ -4,6 +4,7 @@ void ExtensionSelecter::setCheck()
 {
 	Array<String> defaultExtensions = _extensionData[U"default"].getArray<String>();
 
+	//defaultに設定された拡張子だけチェックを入れて初期化
 	for (size_t i = 0; i < _member; i++)
 		if (defaultExtensions.includes(_allExtensions[i]) == true)
 			_checkFlags[i] = true;
@@ -47,10 +48,10 @@ void ExtensionSelecter::setExtensions()
 
 ExtensionSelecter::ExtensionSelecter()
 {
-	//拡張子ファイルの設定
-	_extensionData.open(U"extension.json");
+	
+	_extensionData.open(U"extension.json");	//拡張子ファイルを開く
 
-	loadExtensions();
+	loadExtensions();	//拡張子の読み込み
 
 	//チェックボックス要素の初期化
 	_member = _allExtensions.size();

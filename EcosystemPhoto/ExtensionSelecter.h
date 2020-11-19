@@ -11,7 +11,7 @@ private:
 	Array<bool> _checkFlags;	//拡張子が有効か
 	int _member;	//拡張子の数
 
-	bool _reloadFlag;
+	bool _reloadFlag;	//画像セルのリロードフラグ
 
 	const Point MERGIN = Point(16, 16);	//合間
 	const Point SIZE = Point(96, 32);	//大きさ
@@ -28,5 +28,5 @@ public:
 	void update();	//描画兼更新
 
 	Array<String> extensions();	//有効な拡張子を返す
-	bool reloadFlag();
+	bool reloadFlag();	//画像セルのリロードフラグ
 };

@@ -29,21 +29,21 @@ void Main()
 	ExtensionSelecter extensionSelecter;	//チェックボックス列
 	FolderSelecter folderChoice;	//ブラウズボタン
 
-	extensions = extensionSelecter.extensions();
-	path = folderChoice.path();
+	extensions = extensionSelecter.extensions();	//有効な拡張子の初期化
+	path = folderChoice.path();	//カレントパスの初期化
 
-	ini();
+	ini();	//その他初期化処理
 
 	while (System::Update())
 	{
 		//更新処理
-		if (extensionSelecter.reloadFlag() == true)
+		if (extensionSelecter.reloadFlag() == true)	//拡張子設定が変更されたら
 		{
 			extensions = extensionSelecter.extensions();
 			loadCell();
 		}
 
-		if (folderChoice.reloadFlag())
+		if (folderChoice.reloadFlag())	//パスが変更されたら
 		{
 			path = folderChoice.path();
 			loadCell();
@@ -51,12 +51,13 @@ void Main()
 
 		scroll.update();
 
-		if (taskBar.mouseOver() == true)
-			for (auto& cell : cells)
-				cell.update();
-
 		for (auto& cell : cells)
+		{
+			if (taskBar.mouseOver() != true)	//タスクバー上にマウスがない
+				cell.update();	//画像ビューの呼び出し
+
 			cell.setScroll(scroll.scroll());
+		}
 
 		//画像の順次ロード
 		if (cellIndex < cells.size())
@@ -79,6 +80,7 @@ void Main()
 void ini()
 {
 	Scene::SetBackground(Color(128, 128, 128));
+	Window::SetTitle(U"EcosystemPhoto");
 
 	FontAsset::Register(U"16", 16);	//フォントを用意
 
@@ -104,6 +106,7 @@ void loadCell()
 	for (size_t row = 0; row < photoPaths.size(); row++)
 		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
 
+	//スクロール下限値の設定
 	if(cells.size() != 0)
 		scroll.reset(cells[cells.size() - 1].bottomY());
 }

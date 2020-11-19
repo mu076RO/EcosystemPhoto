@@ -8,7 +8,7 @@ private:
 	int _bottomY;	//スクロールの下限
 
 	const int SPEED;	//スクロール速度
-	const int SCROLL_MERGIN;
+	const int SCROLL_MERGIN;	//スクロールのはみ出し幅
 
 public:
 	ScrollPage();
