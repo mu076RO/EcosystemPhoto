@@ -9,7 +9,6 @@
 
 //数値をまとめる
 //注意ダイアログを出す
-//文字を丸める
 //設定ファイルをフォルダに入れる
 
 //画像セルの行数と列数
@@ -28,6 +27,8 @@ Array<ImageCell> cells;	//画像セル
 size_t cellIndex;
 
 ScrollPage scroll;
+
+
 
 void Main()
 {
