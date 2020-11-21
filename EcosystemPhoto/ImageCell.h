@@ -1,6 +1,7 @@
 #pragma once
 #include <Siv3d.hpp>
 #include <windows.h>
+#include "DEFINE.h"
 
 class ImageCell
 {

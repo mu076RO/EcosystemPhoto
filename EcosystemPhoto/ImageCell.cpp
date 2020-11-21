@@ -62,7 +62,7 @@ void ImageCell::draw()
 		_texture.drawAt(movedImageRect.center());
 
 		movedNameRect.draw();
-		FontAsset(U"16")(_name).draw(movedNameRect.stretched(0,8), Palette::Black);	//–¼‘O•`‰æ
+		FontAsset(U"16")(_name).draw(movedNameRect.stretched(0, DEFINE::fontSize/2), Palette::Black);	//–¼‘O•`‰æ
 	}
 
 	if (movedRect.mouseOver() == true)

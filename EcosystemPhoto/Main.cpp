@@ -5,7 +5,6 @@
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
 
-//数値をまとめる
 //設定ファイルをフォルダに入れる
 
 //画像セルの行数と列数
@@ -31,13 +30,15 @@ ScrollPage scroll;
 
 void Main()
 {
-	ExtensionSelecter extensionSelecter;	//チェックボックス列
-	FolderSelecter folderChoice;	//ブラウズボタン
+	ini();	//その他初期化処理
 
+	ExtensionSelecter extensionSelecter;	//チェックボックス列
 	extensions = extensionSelecter.extensions();	//有効な拡張子の初期化
+
+	FolderSelecter folderChoice;	//ブラウズボタン
 	path = folderChoice.path();	//カレントパスの初期化
 
-	ini();	//その他初期化処理
+	loadCell();
 
 	while (System::Update())
 	{
@@ -58,7 +59,7 @@ void Main()
 
 		for (auto& cell : cells)
 		{
-			if (taskBar.mouseOver() != true)	//タスクバー上にマウスがない
+			if (DEFINE::taskBar.mouseOver() != true)	//タスクバー上にマウスがない
 				cell.update();	//画像ビューの呼び出し
 
 			cell.setScroll(scroll.scroll());
@@ -74,7 +75,7 @@ void Main()
 		//描画
 		for (auto& cell : cells)
 			cell.draw();
-		taskBar.draw(backGloundColor);
+		DEFINE::taskBar.draw(DEFINE::backGloundColor);
 
 		//UI描画
 		extensionSelecter.update();
@@ -84,12 +85,16 @@ void Main()
 
 void ini()
 {
-	Scene::SetBackground(backGloundColor);
+	Scene::SetBackground(DEFINE::backGloundColor);
 	Window::SetTitle(U"EcosystemPhoto");
 
-	FontAsset::Register(U"16", fontSize);	//フォントを用意
+	FontAsset::Register(U"16", DEFINE::fontSize);	//フォントを用意
 
-	loadCell();
+	if (FileSystem::Exists(DEFINE::DATAFOLDERPATH) != true || FileSystem::IsDirectory(DEFINE::DATAFOLDERPATH) != true)
+	{
+		System::ShowMessageBox(U"以下のディレクトリに設定フォルダを作成します。\n" + FileSystem::CurrentDirectory());
+		FileSystem::CreateDirectories(DEFINE::DATAFOLDERPATH);
+	}
 }
 
 void loadCell()
