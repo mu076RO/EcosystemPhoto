@@ -43,9 +43,13 @@ void FolderSelecter::update()
 	{
 		Optional<String> newPath = Dialog::SelectFolder(_path, U"フォルダを選択");
 
-		if (newPath.has_value() == true)	//基底フォルダ以下である
+		if (newPath.has_value() == true)
 		{
-			if (newPath.value().includes(_basePath) == true)
+			MessageBoxSelection select = MessageBoxSelection::No;
+			if (newPath.value().includes(_basePath) != true)	//基底フォルダ以下でない
+				select = System::ShowMessageBox(U"実行ファイルより上位のフォルダを指定しています。\n開いてもよろしいですか？", MessageBoxButtons::YesNo);
+			
+			if (newPath.value().includes(_basePath) == true || select == MessageBoxSelection::Yes)
 			{
 				_path = newPath.value();
 				_reloadFlag = true;
@@ -62,8 +66,6 @@ void FolderSelecter::update()
 
 				_reloadFlag = true;
 			}
-			else
-				System::ShowMessageBox(U"実行ファイルより上位のディレクトリは指定できません");
 		}
 	}
 }

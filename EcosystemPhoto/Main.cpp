@@ -1,19 +1,18 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
-#include <future>
-#include <chrono>
-#include "UIDEFINE.h"
+#include "DEFINE.h"
 #include "ExtensionSelecter.h"
 #include "ImageCell.h"
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
 
 //数値をまとめる
-//注意ダイアログを出す
 //設定ファイルをフォルダに入れる
 
 //画像セルの行数と列数
-const int LINENUM = 6;
-const int ROWNUM = 5;
+const size_t LINENUM = 6;
+const size_t ROWNUM = 5;
+
+const size_t MAXROWNUM = 10;
 
 void ini();	//初期化
 void loadCell();	//セルのロード
@@ -75,7 +74,7 @@ void Main()
 		//描画
 		for (auto& cell : cells)
 			cell.draw();
-		taskBar.draw(Color(128, 128, 128));
+		taskBar.draw(backGloundColor);
 
 		//UI描画
 		extensionSelecter.update();
@@ -85,10 +84,10 @@ void Main()
 
 void ini()
 {
-	Scene::SetBackground(Color(128, 128, 128));
+	Scene::SetBackground(backGloundColor);
 	Window::SetTitle(U"EcosystemPhoto");
 
-	FontAsset::Register(U"16", 16);	//フォントを用意
+	FontAsset::Register(U"16", fontSize);	//フォントを用意
 
 	loadCell();
 }
@@ -96,6 +95,7 @@ void ini()
 void loadCell()
 {
 	photoPaths.clear();
+	size_t cellNum = 0;
 	//再帰的にpath以下の全ファイルを捜査
 	for (auto& child : FileSystem::DirectoryContents(path, true))
 	{
@@ -103,6 +103,14 @@ void loadCell()
 		if (extensions.includes(FileSystem::Extension(child)) == true)
 		{
 			photoPaths.push_back(child);
+			cellNum++;
+		}
+
+		if (cellNum == MAXROWNUM * LINENUM)
+		{
+			MessageBoxSelection select = System::ShowMessageBox(U"読み込んだ方向が制限値を超えました。\n" + Format(MAXROWNUM * LINENUM) + U"項目目以降もロードしますか？",MessageBoxButtons::YesNo);
+			if (select == MessageBoxSelection::No)
+				break;
 		}
 	}
 
