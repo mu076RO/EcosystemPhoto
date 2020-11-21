@@ -26,7 +26,7 @@ void FolderSelecter::loadPath()
 			pathData.key(U"current").writeString(_path);
 		}
 		pathData.endObject();
-		pathData.save(U"path.json");
+		pathData.save(DEFINE::DATAFOLDERPATH + U"path.json");
 	}
 }
 
