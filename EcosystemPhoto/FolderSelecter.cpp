@@ -43,23 +43,28 @@ void FolderSelecter::update()
 	{
 		Optional<String> newPath = Dialog::SelectFolder(_path, U"フォルダを選択");
 
-		if (newPath.has_value() == true && newPath.value().includes(_basePath) == true)	//基底フォルダ以下である
+		if (newPath.has_value() == true)	//基底フォルダ以下である
 		{
-			_path = newPath.value();
-			_reloadFlag = true;
-
-			//jsonファイルの更新
-			JSONWriter pathData;
-			pathData.startObject();
+			if (newPath.value().includes(_basePath) == true)
 			{
-				pathData.key(U"base").writeString(_basePath);
-				pathData.key(U"current").writeString(_path);
-			}
-			pathData.endObject();
-			pathData.save(U"path.json");
+				_path = newPath.value();
+				_reloadFlag = true;
 
-			_reloadFlag = true;
-		}	
+				//jsonファイルの更新
+				JSONWriter pathData;
+				pathData.startObject();
+				{
+					pathData.key(U"base").writeString(_basePath);
+					pathData.key(U"current").writeString(_path);
+				}
+				pathData.endObject();
+				pathData.save(U"path.json");
+
+				_reloadFlag = true;
+			}
+			else
+				System::ShowMessageBox(U"実行ファイルより上位のディレクトリは指定できません");
+		}
 	}
 }
 
