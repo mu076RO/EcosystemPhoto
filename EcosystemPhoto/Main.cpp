@@ -1,15 +1,17 @@
 ﻿#include <Siv3D.hpp> // OpenSiv3D v0.4.3
-#include <future>
-#include <chrono>
-#include "UIDEFINE.h"
+#include "DEFINE.h"
 #include "ExtensionSelecter.h"
 #include "ImageCell.h"
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
 
+//設定ファイルをフォルダに入れる
+
 //画像セルの行数と列数
-const int LINENUM = 6;
-const int ROWNUM = 5;
+const size_t LINENUM = 6;
+const size_t ROWNUM = 5;
+
+const size_t MAXROWNUM = 10;
 
 void ini();	//初期化
 void loadCell();	//セルのロード
@@ -24,15 +26,19 @@ size_t cellIndex;
 
 ScrollPage scroll;
 
+
+
 void Main()
 {
-	ExtensionSelecter extensionSelecter;	//チェックボックス列
-	FolderSelecter folderChoice;	//ブラウズボタン
+	ini();	//その他初期化処理
 
+	ExtensionSelecter extensionSelecter;	//チェックボックス列
 	extensions = extensionSelecter.extensions();	//有効な拡張子の初期化
+
+	FolderSelecter folderChoice;	//ブラウズボタン
 	path = folderChoice.path();	//カレントパスの初期化
 
-	ini();	//その他初期化処理
+	loadCell();
 
 	while (System::Update())
 	{
@@ -53,7 +59,7 @@ void Main()
 
 		for (auto& cell : cells)
 		{
-			if (taskBar.mouseOver() != true)	//タスクバー上にマウスがない
+			if (DEFINE::taskBar.mouseOver() != true)	//タスクバー上にマウスがない
 				cell.update();	//画像ビューの呼び出し
 
 			cell.setScroll(scroll.scroll());
@@ -69,7 +75,7 @@ void Main()
 		//描画
 		for (auto& cell : cells)
 			cell.draw();
-		taskBar.draw(Color(128, 128, 128));
+		DEFINE::taskBar.draw(DEFINE::backGloundColor);
 
 		//UI描画
 		extensionSelecter.update();
@@ -79,17 +85,22 @@ void Main()
 
 void ini()
 {
-	Scene::SetBackground(Color(128, 128, 128));
+	Scene::SetBackground(DEFINE::backGloundColor);
 	Window::SetTitle(U"EcosystemPhoto");
 
-	FontAsset::Register(U"16", 16);	//フォントを用意
+	FontAsset::Register(U"16", DEFINE::fontSize);	//フォントを用意
 
-	loadCell();
+	if (FileSystem::Exists(DEFINE::DATAFOLDERPATH) != true || FileSystem::IsDirectory(DEFINE::DATAFOLDERPATH) != true)
+	{
+		System::ShowMessageBox(U"以下のディレクトリに設定フォルダを作成します。\n" + FileSystem::CurrentDirectory());
+		FileSystem::CreateDirectories(DEFINE::DATAFOLDERPATH);
+	}
 }
 
 void loadCell()
 {
 	photoPaths.clear();
+	size_t cellNum = 0;
 	//再帰的にpath以下の全ファイルを捜査
 	for (auto& child : FileSystem::DirectoryContents(path, true))
 	{
@@ -97,6 +108,14 @@ void loadCell()
 		if (extensions.includes(FileSystem::Extension(child)) == true)
 		{
 			photoPaths.push_back(child);
+			cellNum++;
+		}
+
+		if (cellNum == MAXROWNUM * LINENUM)
+		{
+			MessageBoxSelection select = System::ShowMessageBox(U"読み込んだ方向が制限値を超えました。\n" + Format(MAXROWNUM * LINENUM) + U"項目目以降もロードしますか？",MessageBoxButtons::YesNo);
+			if (select == MessageBoxSelection::No)
+				break;
 		}
 	}
 

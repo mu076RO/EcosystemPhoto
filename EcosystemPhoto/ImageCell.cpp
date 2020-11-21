@@ -56,12 +56,13 @@ void ImageCell::draw()
 	if (Scene::Rect().intersects(movedRect) == true)
 	{
 		Rect movedImageRect = _imageRect.movedBy(0, _scrollY);
+		Rect movedNameRect = _nameRect.movedBy(0, _scrollY).draw();	//–¼‘O˜g•`‰æ
 		movedImageRect.drawFrame(1, Palette::Black);	//˜g•`‰æ
 
 		_texture.drawAt(movedImageRect.center());
 
-		_nameRect.movedBy(0,_scrollY).draw();	//–¼‘O˜g•`‰æ
-		FontAsset(U"16")(_name).drawAt(movedImageRect.bottomCenter(), Palette::Black);	//–¼‘O•`‰æ
+		movedNameRect.draw();
+		FontAsset(U"16")(_name).draw(movedNameRect.stretched(0, DEFINE::fontSize/2), Palette::Black);	//–¼‘O•`‰æ
 	}
 
 	if (movedRect.mouseOver() == true)
