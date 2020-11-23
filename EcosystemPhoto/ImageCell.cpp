@@ -1,10 +1,10 @@
-#include "ImageCell.h"
+ï»¿#include "ImageCell.h"
 
 ImageCell::ImageCell()
 {
 }
 
-ImageCell::ImageCell(Point pos, String path)
+ImageCell::ImageCell(Point pos, String path, bool isFolder)
 {
 	_rect = Rect(pos * SIZE + WINDOW_MERGIN, SIZE);
 	_imageRect = Rect(pos * SIZE + WINDOW_MERGIN + IMAGE_MERGIN, SIZE - IMAGE_MERGIN * 2);
@@ -12,6 +12,8 @@ ImageCell::ImageCell(Point pos, String path)
 
 	_path = path;
 	_name = FileSystem::FileName(path);
+
+	_isFolder = isFolder;
 }
 
 ImageCell::~ImageCell()
@@ -25,10 +27,14 @@ void ImageCell::setScroll(double scroll)
 
 void ImageCell::setTexture()
 {
-	_texture = Texture(_path);	//‰æ‘œ‚Ìæ“¾
-	Point size = _texture.texture.size();	//‰æ‘œƒTƒCƒY‚Ìæ“¾
+	if (_isFolder != true)
+		_texture = Texture(_path);	//ç”»åƒã®å–å¾—
+	else
+		_texture = Texture(Emoji(U"ğŸ“"));
 
-	if (size.y > size.x)	//c‚Æ‰¡‚Ì‘å‚«‚³	‘å‚«‚¢•û‚ª˜g‚Éû‚Ü‚é‚æ‚¤‚É•ÏŒ`
+	Point size = _texture.texture.size();	//ç”»åƒã‚µã‚¤ã‚ºã®å–å¾—
+
+	if (size.y > size.x)	//ç¸¦ã¨æ¨ªã®å¤§ãã•	å¤§ãã„æ–¹ãŒæ ã«åã¾ã‚‹ã‚ˆã†ã«å¤‰å½¢
 	{
 		_texture = _texture.scaled((double)(SIZE.y - IMAGE_MERGIN.y * 2) / size.y);
 		//_texture = TextureAsset(_path)(Point(0, 0), Point(size.y, size.y)).scaled((double)(SIZE.y - CELL_MERGIN.y * 2) / size.y);
@@ -42,7 +48,7 @@ void ImageCell::setTexture()
 
 void ImageCell::update()
 {
-	//ƒNƒŠƒbƒN‚³‚ê‚½‚ç‰æ‘œƒrƒ…[ƒA‚ğ—§‚¿ã‚°
+	//ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‚‰ç”»åƒãƒ“ãƒ¥ãƒ¼ã‚¢ã‚’ç«‹ã¡ä¸Šã’
 	if (_rect.movedBy(0, _scrollY).mouseOver() == true && MouseL.down() == true)
 	{
 		ShellExecute(NULL, L"open", _path.toWstr().c_str(), NULL, NULL, SW_SHOW);
@@ -52,17 +58,17 @@ void ImageCell::update()
 void ImageCell::draw()
 {
 	Rect movedRect = _rect.movedBy(0, _scrollY);
-	//‰æ–Ê“à‚É‚ ‚Á‚½‚ç•`‰æ
+	//ç”»é¢å†…ã«ã‚ã£ãŸã‚‰æç”»
 	if (Scene::Rect().intersects(movedRect) == true)
 	{
 		Rect movedImageRect = _imageRect.movedBy(0, _scrollY);
-		Rect movedNameRect = _nameRect.movedBy(0, _scrollY).draw();	//–¼‘O˜g•`‰æ
-		movedImageRect.drawFrame(1, Palette::Black);	//˜g•`‰æ
+		Rect movedNameRect = _nameRect.movedBy(0, _scrollY).draw();	//åå‰æ æç”»
+		movedImageRect.drawFrame(1, Palette::Black);	//æ æç”»
 
 		_texture.drawAt(movedImageRect.center());
 
 		movedNameRect.draw();
-		FontAsset(U"16")(_name).draw(movedNameRect.stretched(0, DEFINE::fontSize/2), Palette::Black);	//–¼‘O•`‰æ
+		FontAsset(U"16")(_name).draw(movedNameRect.stretched(0, DEFINE::fontSize/2), Palette::Black);	//åå‰æç”»
 	}
 
 	if (movedRect.mouseOver() == true)

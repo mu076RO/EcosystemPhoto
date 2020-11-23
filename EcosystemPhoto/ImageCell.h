@@ -15,13 +15,15 @@ private:
 	Rect _nameRect;	//名前枠
 	double _scrollY;	//スクロールしたy数値
 
+	bool _isFolder;
+
 	Point WINDOW_MERGIN = Point(16, 64);	//ウィンドウの余白
 	Point IMAGE_MERGIN = Point(8, 8);	//セルの余白
 	Point SIZE = Point(128, 128);	//大きさ
 
 public:
 	ImageCell();
-	ImageCell(Point pos, String path);
+	ImageCell(Point pos, String path, bool isFolder);
 
 	~ImageCell();
 

@@ -105,7 +105,7 @@ void loadCell()
 	for (auto& child : FileSystem::DirectoryContents(path, true))
 	{
 		//拡張子が一致したら同じ
-		if (extensions.includes(FileSystem::Extension(child)) == true)
+		if (extensions.includes(FileSystem::Extension(child)) == true || FileSystem::IsDirectory(child) == true)
 		{
 			photoPaths.push_back(child);
 			cellNum++;
@@ -123,7 +123,10 @@ void loadCell()
 	cells.clear();
 	cellIndex = 0;
 	for (size_t row = 0; row < photoPaths.size(); row++)
-		cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row]));
+		if (extensions.includes(FileSystem::Extension(photoPaths[row])) == true)
+			cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row], false));
+		else
+			cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row], true));
 
 	//スクロール下限値の設定
 	if(cells.size() != 0)
