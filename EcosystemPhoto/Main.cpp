@@ -2,6 +2,7 @@
 #include "DEFINE.h"
 #include "ExtensionSelecter.h"
 #include "ImageCell.h"
+#include "FolderCell.h"
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
 
@@ -21,7 +22,7 @@ FilePath path;	//現在パス
 Array<String> extensions;	//有効な拡張子
 Array<String> photoPaths;	//結果を格納
 
-Array<ImageCell> cells;	//画像セル
+Array<std::unique_ptr<BaseCell>> cells;	//画像セル
 size_t cellIndex;
 
 ScrollPage scroll;
@@ -60,9 +61,9 @@ void Main()
 		for (auto& cell : cells)
 		{
 			if (DEFINE::taskBar.mouseOver() != true)	//タスクバー上にマウスがない
-				cell.update();	//画像ビューの呼び出し
+				cell->update();	//画像ビューの呼び出し
 
-			cell.setScroll(scroll.scroll());
+			cell->setScroll(scroll.scroll());
 		}
 
 		//画像の順次ロード
@@ -74,7 +75,7 @@ void Main()
 
 		//描画
 		for (auto& cell : cells)
-			cell.draw();
+			cell->draw();
 		DEFINE::taskBar.draw(DEFINE::backGloundColor);
 
 		//UI描画
@@ -124,18 +125,18 @@ void loadCell()
 	cellIndex = 0;
 	for (size_t row = 0; row < photoPaths.size(); row++)
 		if (extensions.includes(FileSystem::Extension(photoPaths[row])) == true)
-			cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row], false));
+			cells.push_back(std::unique_ptr<BaseCell>(new ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row])));
 		else
-			cells.push_back(ImageCell(Point(row % LINENUM, row / LINENUM), photoPaths[row], true));
+			cells.push_back(std::unique_ptr<BaseCell>(new FolderCell(Point(row % LINENUM, row / LINENUM), photoPaths[row])));
 
 	//スクロール下限値の設定
 	if(cells.size() != 0)
-		scroll.reset(cells[cells.size() - 1].bottomY());
+		scroll.reset(cells[cells.size() - 1]->bottomY());
 }
 
 void loadImage(size_t index)
 {
-	cells[index].setTexture();
+	cells[index]->setTexture();
 }
 
 //
