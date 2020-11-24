@@ -69,3 +69,13 @@ double BaseCell::bottomY()
 {
 	return _rect.pos.y;
 }
+
+String BaseCell::path()
+{
+	return _path;
+}
+
+bool BaseCell::reloadFlag()
+{
+	return false;
+}

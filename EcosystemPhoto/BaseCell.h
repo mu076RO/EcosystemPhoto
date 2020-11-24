@@ -7,7 +7,7 @@ class BaseCell
 {
 protected:
 	TextureRegion _texture;	//サムネイル
-	String _path;	//画像パス
+	FilePath _path;	//画像パス
 	String _name;	//画像名前
 
 	Rect _rect;	//一番外枠
@@ -33,5 +33,7 @@ public:
 	void draw();	//描画
 
 	double bottomY();	//底辺を取得
+	FilePath path();
+	virtual bool reloadFlag();
 };
 

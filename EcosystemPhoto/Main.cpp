@@ -50,7 +50,7 @@ void Main()
 			loadCell();
 		}
 
-		if (folderChoice.reloadFlag())	//パスが変更されたら
+		if (folderChoice.reloadFlag() == true)	//パスが変更されたら
 		{
 			path = folderChoice.path();
 			loadCell();
@@ -58,12 +58,21 @@ void Main()
 
 		scroll.update();
 
+		FilePath tmpPath;
 		for (auto& cell : cells)
 		{
 			if (DEFINE::taskBar.mouseOver() != true)	//タスクバー上にマウスがない
 				cell->update();	//画像ビューの呼び出し
 
+			if (DEFINE::taskBar.mouseOver() != true && cell->reloadFlag() == true)	//パスが変更されたら
+				tmpPath = cell->path();
+
 			cell->setScroll(scroll.scroll());
+		}
+		if (tmpPath.isEmpty() != true)
+		{
+			path = tmpPath;
+			loadCell();
 		}
 
 		//画像の順次ロード
