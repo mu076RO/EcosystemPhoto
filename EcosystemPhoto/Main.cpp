@@ -5,7 +5,7 @@
 #include "FolderCell.h"
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
-#include "SettingWindow.h"
+#include "ConfigWindow.h"
 
 //画像セルの行数と列数
 const size_t LINENUM = 6;
@@ -32,7 +32,7 @@ void Main()
 
 	ExtensionSelecter extensionSelecter;	//チェックボックス列
 	extensions = extensionSelecter.extensions();	//有効な拡張子の初期化
-	std::unique_ptr<SettingWindow> settingWindow;
+	std::unique_ptr<ConfigWindow> settingWindow;
 
 	FolderSelecter folderChoice;	//ブラウズボタン
 	path = folderChoice.path();	//カレントパスの初期化
@@ -91,7 +91,7 @@ void Main()
 			folderChoice.update();
 			if (SimpleGUI::Button(U"S", Point(800 - 32 - 16, 16), 32) == true)
 			{
-				settingWindow.reset(new SettingWindow());
+				settingWindow.reset(new ConfigWindow());
 			}
 		}
 		else

@@ -1,13 +1,13 @@
 #pragma once
 #include <Siv3D.hpp>
 
-class SettingWindow
+class ConfigWindow
 {
 private:
 	bool _determineFlag;
 
 public:
-	SettingWindow();
+	ConfigWindow();
 
 	void update();
 	void draw();
