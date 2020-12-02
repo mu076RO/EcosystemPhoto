@@ -10,7 +10,7 @@ private:
 
 	bool _reloadFlag;	//画像セルのリロードフラグ
 
-	const Point MERGIN = Point(800-96-16, 16);	//空白
+	const Point MERGIN = Point(800-96-16-32-16, 16);	//空白
 	const Point SIZE = Point(96, 32);	//サイズ
 
 private:

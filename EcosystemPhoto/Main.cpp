@@ -5,8 +5,7 @@
 #include "FolderCell.h"
 #include "FolderSelecter.h"
 #include "ScrollPage.h"
-
-//設定ファイルをフォルダに入れる
+#include "SettingWindow.h"
 
 //画像セルの行数と列数
 const size_t LINENUM = 6;
@@ -27,14 +26,13 @@ size_t cellIndex;
 
 ScrollPage scroll;
 
-
-
 void Main()
 {
 	ini();	//その他初期化処理
 
 	ExtensionSelecter extensionSelecter;	//チェックボックス列
 	extensions = extensionSelecter.extensions();	//有効な拡張子の初期化
+	std::unique_ptr<SettingWindow> settingWindow;
 
 	FolderSelecter folderChoice;	//ブラウズボタン
 	path = folderChoice.path();	//カレントパスの初期化
@@ -43,53 +41,71 @@ void Main()
 
 	while (System::Update())
 	{
-		//更新処理
-		if (extensionSelecter.reloadFlag() == true)	//拡張子設定が変更されたら
+		if (settingWindow == nullptr)
 		{
-			extensions = extensionSelecter.extensions();
-			loadCell();
-		}
+			//更新処理
+			if (extensionSelecter.reloadFlag() == true)	//拡張子設定が変更されたら
+			{
+				extensions = extensionSelecter.extensions();
+				loadCell();
+			}
+			if (folderChoice.reloadFlag() == true)	//パスが変更されたら
+			{
+				path = folderChoice.path();
+				loadCell();
+			}
 
-		if (folderChoice.reloadFlag() == true)	//パスが変更されたら
+			//UI描画
+
+			FilePath tmpPath;
+			for (auto& cell : cells)
+			{
+				if (DEFINE::taskBar.mouseOver() != true)	//タスクバー上にマウスがない
+					cell->update();	//画像ビューの呼び出し
+
+				if (DEFINE::taskBar.mouseOver() != true && cell->reloadFlag() == true)	//パスが変更されたら
+					tmpPath = cell->path();
+
+				cell->setScroll(scroll.scroll());
+			}
+			if (tmpPath.isEmpty() != true)
+			{
+				path = tmpPath;
+				loadCell();
+			}
+
+			//画像の順次ロード
+			if (cellIndex < cells.size())
+			{
+				loadImage(cellIndex);
+				cellIndex++;
+			}
+
+			//描画
+			for (auto& cell : cells)
+				cell->draw();
+			DEFINE::taskBar.draw(DEFINE::backGloundColor);
+
+			scroll.update();
+			extensionSelecter.update();
+			folderChoice.update();
+			if (SimpleGUI::Button(U"S", Point(800 - 32 - 16, 16), 32) == true)
+			{
+				settingWindow.reset(new SettingWindow());
+			}
+		}
+		else
 		{
-			path = folderChoice.path();
-			loadCell();
+			settingWindow->update();
+			if (settingWindow->determineFlag() == true)
+			{
+				settingWindow.release();
+				ini();
+				loadCell();
+			}
+
+			settingWindow->draw();
 		}
-
-		scroll.update();
-
-		FilePath tmpPath;
-		for (auto& cell : cells)
-		{
-			if (DEFINE::taskBar.mouseOver() != true)	//タスクバー上にマウスがない
-				cell->update();	//画像ビューの呼び出し
-
-			if (DEFINE::taskBar.mouseOver() != true && cell->reloadFlag() == true)	//パスが変更されたら
-				tmpPath = cell->path();
-
-			cell->setScroll(scroll.scroll());
-		}
-		if (tmpPath.isEmpty() != true)
-		{
-			path = tmpPath;
-			loadCell();
-		}
-
-		//画像の順次ロード
-		if (cellIndex < cells.size())
-		{
-			loadImage(cellIndex);
-			cellIndex++;
-		}
-
-		//描画
-		for (auto& cell : cells)
-			cell->draw();
-		DEFINE::taskBar.draw(DEFINE::backGloundColor);
-
-		//UI描画
-		extensionSelecter.update();
-		folderChoice.update();
 	}
 }
 
