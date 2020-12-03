@@ -3,7 +3,7 @@
 void FolderSelecter::loadPath()
 {
 	//パスファイルの読み込み
-	JSONReader pathData(DEFINE::DATAFOLDERPATH + U"/path.json");
+	JSONReader pathData(DEFINE::DATAFOLDERPATH + U"path.json");
 	//パスファイルがある場合
 	if (pathData.isEmpty() != true)
 	{
@@ -26,7 +26,7 @@ void FolderSelecter::loadPath()
 			pathData.key(U"current").writeString(_path);
 		}
 		pathData.endObject();
-		pathData.save(DEFINE::DATAFOLDERPATH + U"/path.json");
+		pathData.save(DEFINE::DATAFOLDERPATH + U"path.json");
 	}
 }
 
@@ -62,7 +62,7 @@ void FolderSelecter::update()
 					pathData.key(U"current").writeString(_path);
 				}
 				pathData.endObject();
-				pathData.save(DEFINE::DATAFOLDERPATH + U"/path.json");
+				pathData.save(DEFINE::DATAFOLDERPATH + U"path.json");
 
 				_reloadFlag = true;
 			}

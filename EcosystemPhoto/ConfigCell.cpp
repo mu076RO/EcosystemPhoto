@@ -15,7 +15,12 @@ void ConfigCell::draw()
 	Line(Point(0, _top), Point(800, _top)).draw(Palette::Black);
 }
 
-int ConfigCell::height()
+int ConfigCell::bottom()
 {
-	return 64;
+	return _top + _size.y;
+}
+
+bool ConfigCell::boolConfig()
+{
+	return false;
 }

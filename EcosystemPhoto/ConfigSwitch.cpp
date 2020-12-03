@@ -5,9 +5,8 @@ ConfigSwitch::ConfigSwitch() :ConfigCell()
 	_checkFlag = false;
 }
 
-ConfigSwitch::ConfigSwitch(String discription, String configElem, int top, int height): ConfigCell(discription, top, height)
+ConfigSwitch::ConfigSwitch(String discription, int top, int height): ConfigCell(discription, top, height)
 {
-	_configElem = configElem;
 	_checkFlag = false;
 }
 
@@ -25,4 +24,9 @@ void ConfigSwitch::draw()
 int ConfigSwitch::height()
 {
 	return 64;
+}
+
+bool ConfigSwitch::boolConfig()
+{
+	return _checkFlag;
 }

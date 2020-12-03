@@ -15,6 +15,8 @@ public:
 	virtual void update() {};
 	virtual void draw();
 
-	virtual int height();
+	virtual int bottom();
+
+	virtual bool boolConfig();
 };
 

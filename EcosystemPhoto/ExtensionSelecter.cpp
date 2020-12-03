@@ -40,7 +40,7 @@ void ExtensionSelecter::setExtensions()
 
 ExtensionSelecter::ExtensionSelecter()
 {
-	_extensionData.open(DEFINE::DATAFOLDERPATH + U"/extension.json");	//拡張子ファイルを開く
+	_extensionData.open(DEFINE::DATAFOLDERPATH + U"extension.json");	//拡張子ファイルを開く
 
 	if (_extensionData.isEmpty() == true)	//ファイルがない場合
 	{
@@ -52,7 +52,7 @@ ExtensionSelecter::ExtensionSelecter()
 			extensionData.key(U"default").writeArray<String>({ U"png" });
 		}
 		extensionData.endObject();
-		extensionData.save(DEFINE::DATAFOLDERPATH + U"/extension.json");
+		extensionData.save(DEFINE::DATAFOLDERPATH + U"extension.json");
 	}
 
 	loadExtensions();	//拡張子の読み込み

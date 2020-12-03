@@ -8,5 +8,5 @@ namespace DEFINE
 
 	const Rect taskBar = Rect(Point(0, -64), Point(800, 128));	//タスクバー（被った画像セルを隠す）
 
-	const FilePath DATAFOLDERPATH = U".ecosystem.data";
+	const FilePath DATAFOLDERPATH = U".ecosystem.data/";
 }

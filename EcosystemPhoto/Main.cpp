@@ -132,8 +132,10 @@ void loadCell()
 	photoPaths.push_back(parent);
 	cellNum++;
 
+	JSONReader json(DEFINE::DATAFOLDERPATH + U"config.json");
+
 	//再帰的にpath以下の全ファイルを捜査
-	for (auto& child : FileSystem::DirectoryContents(path, true))
+	for (auto& child : FileSystem::DirectoryContents(path, json[U"recursive"].get<bool>()))
 	{
 		//拡張子が一致したら同じ
 		if (extensions.includes(FileSystem::Extension(child)) == true || FileSystem::IsDirectory(child) == true)
